@@ -1,0 +1,13 @@
+[package]
+name = "server"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+water_http = {workspace = true}
+frontend = {path = "../frontend"}
+redis_service = {path = "../redis_service"}
+data_holder = {path = "../data_holder"}
+db = {path = "../db"}
+tokio = {workspace = true}
+dotenv = {workspace = true}

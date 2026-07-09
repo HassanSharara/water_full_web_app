@@ -1,0 +1,8 @@
+[package]
+name = "data_holder"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+redis_service ={path = "../redis_service"}
+water_http =  {workspace = true}

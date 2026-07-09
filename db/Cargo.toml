@@ -1,0 +1,13 @@
+[package]
+name = "db"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+sqlx = {workspace = true}
+dotenv = {workspace = true}
+serde = { workspace = true}
+bcrypt= {workspace = true}
+tokio = {workspace = true}
+
+

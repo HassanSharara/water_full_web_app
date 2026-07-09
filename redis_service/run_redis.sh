@@ -1,0 +1,1 @@
+docker run -d --rm --name water_redis_server -v "$(pwd)/redisData":/data -p 6379:6379 redis:8.2.7

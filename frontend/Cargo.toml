@@ -1,0 +1,12 @@
+[package]
+name = "frontend"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+yarte = {workspace = true}
+water_http = {workspace = true}
+data_holder = {path = "../data_holder"}
+serde = {workspace = true}
+serde_json = {workspace = true}
+db = {path = "../db"}
