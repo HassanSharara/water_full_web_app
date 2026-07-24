@@ -44,7 +44,7 @@ impl Session {
     pub fn generate_set_cookie_for_refresh_token(&self) -> String {
         format!("refresh_token={}; Path=/frontend; HttpOnly; SameSite=Strict; Secure; Max-Age=900", self.refresh_token)
     } pub fn generate_set_cookie_for_remember_token(&self) -> String {
-        format!("remember_token={}; Path=/frontend/login; HttpOnly; SameSite=Strict; Secure; Max-Age=4000", self.remember_token.as_ref().unwrap())
+        format!("remember_token={}; Path=/frontend/login; HttpOnly; SameSite=Strict; Secure; Max-Age=80000", self.remember_token.as_ref().unwrap())
     }
 
     pub fn generate_logout_cookie_for_session() -> String {
