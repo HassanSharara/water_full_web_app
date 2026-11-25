@@ -1,9 +1,7 @@
 use sqlx::{FromRow, MySql, MySqlConnection,Error};
 
 pub mod user;
-
-
-
+pub mod categories;
 
 pub trait GeneralDbModelsTrait {
     type Model: for<'r> FromRow<'r, sqlx::mysql::MySqlRow> + Send + Unpin;

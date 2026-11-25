@@ -72,7 +72,7 @@ impl UserDbModel {
             .await?;
         // 3. Verify
         if let Some(data) = auth_data {
-            if bcrypt::verify(password,&data.password_hash).is_ok() {
+            if let Ok(r) = bcrypt::verify(password,&data.password_hash) && r {
                 return Ok(Some(data.user));
             }
         }

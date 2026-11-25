@@ -5,5 +5,6 @@ pub mod auth;
 pub mod layout;
 pub mod home;
 pub mod sidebar;
+pub mod categories;
 
 

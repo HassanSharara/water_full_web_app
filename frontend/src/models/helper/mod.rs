@@ -1,3 +1,6 @@
+pub mod create_html_model;
+pub mod html_list_model;
+
 use std::collections::HashMap;
 use yarte::Template;
 use db::models::user::UserDbModel;
@@ -38,7 +41,3 @@ impl <T:Template> HtmlRenderer for T {
 }
 
 
-// pub trait MainLayoutBuilder {
-//
-//     fn build_layout<'a>(&self)->MainLayout<'a>;
-// }

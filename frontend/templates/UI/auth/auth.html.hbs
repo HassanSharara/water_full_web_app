@@ -30,6 +30,8 @@
                         <div class="card-body">
                             <form method="POST" action="loginPost" class="needs-validation" novalidate="">
 
+                                <input type="hidden" class="form-control" name="csrf_token"  value="{{self.csrf_token}}">
+
                                 <div class="form-group">
                                     <label for="email">Email</label>
                                     <input id="email" type="email" class="form-control" name="email" tabindex="1" value="" required autofocus>

@@ -67,6 +67,7 @@
      Home,
      Categories,
      CreateCategory,
+     CreateCategoryPost,
  }
  
  impl Page {
@@ -75,7 +76,8 @@
          match self {
              Page::Home => {"/frontend/home"},
              Page::Categories => {"/frontend/categories"},
-             Page::CreateCategory => {"/frontend/createCategory"}
+             Page::CreateCategory => {"/frontend/categories/create"},
+             Page::CreateCategoryPost => "/frontend/categories/createCatPost"
          }
      }
  }

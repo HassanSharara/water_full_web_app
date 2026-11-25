@@ -1,0 +1,36 @@
+<div class="section-body">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>{{self.get_page_title()}}</h4>
+                    {{{ self.get_header_action_html() }}}
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                {{{ self.get_columns_html() }}}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{{ self.get_rows_html() }}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{{ self.get_pagination_html() }}}
+</div>
+
+<style>
+    .w-5 {
+        display: none;
+        background: black;
+    }
+</style>

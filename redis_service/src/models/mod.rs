@@ -44,7 +44,7 @@ impl Session {
     pub fn generate_set_cookie_for_refresh_token(&self) -> String {
         format!("refresh_token={}; Path=/frontend; HttpOnly; SameSite=Strict; Secure; Max-Age=900", self.refresh_token)
     } pub fn generate_set_cookie_for_remember_token(&self) -> String {
-        format!("remember_token={}; Path=/frontend/login; HttpOnly; SameSite=Strict; Secure; Max-Age=80000", self.remember_token.as_ref().unwrap())
+        format!("remember_token={}; Path=/frontend/login; HttpOnly; SameSite=Strict; Secure; Max-Age=604800", self.remember_token.as_ref().unwrap())
     }
 
     pub fn generate_logout_cookie_for_session() -> String {
@@ -114,6 +114,7 @@ impl Session {
                 }
             }
         }
+        // println!("generating new session");
         let new_session = Self::default(ip);
         Self::save_to_cache(&new_session).await?;
         Ok(new_session)
@@ -134,6 +135,7 @@ impl Session {
 
                         let mut new_session = Session::default(ip);
                         new_session.user_model = old_session.user_model;
+                        // new_session.csrf_token = old_session.csrf_token;
 
                         Self::save_to_cache(&new_session).await?;
                         return Ok(new_session);
@@ -163,6 +165,68 @@ impl Session {
         let mut connection = pool.get().await.map_err(|_| ())?;
         let _: i32 = AsyncCommands::del(&mut connection, session_id).await.map_err(|_| ())?;
         Ok(())
+    }
+}
+
+
+impl Session {
+    /// Checks the rate limit for the current session.
+    ///
+    /// - If logged in (`user_model` exists), tracks by `user_id` across ALL devices/IPs.
+    /// - If unauthenticated, tracks by IP address.
+    ///
+    /// Returns `Ok(true)` if allowed, `Ok(false)` if rate limit exceeded.
+    pub async fn check_rate_limit(&self, max_requests: i64, window_seconds: i64) -> Result<bool, ()> {
+        let pool = crate::get_redis();
+        let mut conn = pool.get().await.map_err(|_| ())?;
+
+        // 1. Build Key: Global user ID bucket if logged in, otherwise IP bucket
+        let key = match &self.user_model {
+            Some(user) => format!("ratelimit:user:{}", user.id),
+            None => format!("ratelimit:ip:{}", self.remote_ip),
+        };
+
+        // 2. Get current timestamp in milliseconds
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_err(|_| ())?
+            .as_millis() as i64;
+
+        let window_ms = window_seconds * 1000;
+
+        // 3. Sliding window Lua script (atomic ZSET update)
+        let script = redis::Script::new(r#"
+            local key = KEYS[1]
+            local now = tonumber(ARGV[1])
+            local window = tonumber(ARGV[2])
+            local limit = tonumber(ARGV[3])
+            local clear_before = now - window
+
+            -- Clear timestamps older than window
+            redis.call('ZREMRANGEBYSCORE', key, '-inf', clear_before)
+
+            -- Count current requests
+            local current_requests = redis.call('ZCARD', key)
+
+            if current_requests < limit then
+                redis.call('ZADD', key, now, now)
+                redis.call('PEXPIRE', key, window)
+                return 1
+            else
+                return 0
+            end
+        "#);
+
+        let allowed: i32 = script
+            .key(key)
+            .arg(now)
+            .arg(window_ms)
+            .arg(max_requests)
+            .invoke_async(&mut conn)
+            .await
+            .unwrap_or(1); // Fail open on Redis error so legitimate traffic isn't blocked
+
+        Ok(allowed == 1)
     }
 }
 

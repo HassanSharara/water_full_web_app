@@ -1,0 +1,27 @@
+<div class="section-body">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <form enctype="multipart/form-data" action="{{self.get_action_route()}}" method="post">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>خيارات الإدخال</h4>
+                    </div>
+
+                    {{# if let Some(csrf_token) = self.get_csrf_token()}}
+                        <input type="hidden" name="csrf_token" value="{{csrf_token}}">
+
+                    {{/if}}
+                    <div class="card-body">
+                        {{{ self.get_inputs_html() }}}
+                    </div>
+
+                    <div class="card-footer text-right">
+                        <button class="btn btn-primary mr-1" type="submit">
+                            حفظ البيانات
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
